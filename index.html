@@ -19,32 +19,84 @@
 
     <style>
       /* Small custom tweaks */
-      .gradient-hero { background: linear-gradient(135deg, #0ea5a4 0%, #60a5fa 100%);} 
-      .glass { backdrop-filter: blur(6px); background-color: rgba(255,255,255,0.06); }
-      /* project image placeholders */
-      .project-thumb { background-size: cover; background-position: center; min-height: 160px; }
+      :root {
+        --nf-bg: #0b0b0f;
+        --nf-panel: rgba(255, 255, 255, 0.06);
+        --nf-panel-2: rgba(255, 255, 255, 0.08);
+        --nf-border: rgba(255, 255, 255, 0.10);
+        --nf-text: rgba(255, 255, 255, 0.92);
+        --nf-muted: rgba(255, 255, 255, 0.62);
+        --nf-red: #e50914;
+      }
+
+      .glass { backdrop-filter: blur(10px); background-color: var(--nf-panel); }
+      .nf-surface { background: var(--nf-panel); border: 1px solid var(--nf-border); }
+      .nf-surface-2 { background: var(--nf-panel-2); border: 1px solid var(--nf-border); }
+      .nf-shadow { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
+
+      .nf-hero {
+        background:
+          radial-gradient(1200px 600px at 70% 20%, rgba(229, 9, 20, 0.18), transparent 60%),
+          radial-gradient(900px 500px at 20% 10%, rgba(59, 130, 246, 0.18), transparent 55%),
+          linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.90));
+      }
+
+      .project-thumb {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 176px;
+        width: 100%;
+      }
+
+      @media (min-width: 640px) {
+        .project-thumb { height: 190px; }
+      }
+
+      /* Smooth section reveal */
+      .reveal { opacity: 0; transform: translateY(14px); transition: opacity 700ms ease, transform 700ms ease; }
+      .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+      .reveal-left { opacity: 0; transform: translateX(-16px); transition: opacity 700ms ease, transform 700ms ease; }
+      .reveal-right { opacity: 0; transform: translateX(16px); transition: opacity 700ms ease, transform 700ms ease; }
+      .reveal-left.is-visible, .reveal-right.is-visible { opacity: 1; transform: translateX(0); }
+
+      /* Horizontal rows (Netflix-like) */
+      .row-scroll { scroll-snap-type: x mandatory; }
+      .row-scroll > * { scroll-snap-align: start; }
+    
+      /* Card micro-interactions */
+      .nf-card { transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease; }
+      .nf-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 18px 38px rgba(0, 0, 0, 0.55); border-color: rgba(255,255,255,0.16); }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reveal, .reveal-left, .reveal-right { transition: none !important; transform: none !important; opacity: 1 !important; }
+        .nf-card { transition: none !important; }
+      }
     </style>
   </head>
 
-  <body class="bg-slate-900 text-slate-100 leading-relaxed antialiased">
+  <body class="leading-relaxed antialiased" style="background: var(--nf-bg); color: var(--nf-text);">
     <!-- NAV -->
-    <header class="sticky top-0 z-40 backdrop-blur-md glass border-b border-slate-700">
+    <header class="sticky top-0 z-40 backdrop-blur-md glass" style="border-bottom: 1px solid var(--nf-border);">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <a href="#home" class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-md bg-gradient-to-tr from-cyan-400 to-blue-500 flex items-center justify-center font-bold text-slate-900">KS</div>
+            <div class="w-10 h-10 rounded-md flex items-center justify-center font-bold" style="background: var(--nf-red); color: #fff;">KS</div>
             <div class="hidden sm:block">
               <div class="font-semibold">Kandoji Shivasai</div>
-              <div class="text-slate-400 text-xs">Mobile App Developer</div>
+              <div class="text-xs" style="color: var(--nf-muted);">Mobile App Developer</div>
             </div>
           </a>
 
-          <nav class="hidden md:flex items-center gap-6 text-slate-200">
+          <nav class="hidden md:flex items-center gap-6">
             <a href="#projects" class="hover:text-white">Projects</a>
             <a href="#skills" class="hover:text-white">Skills</a>
             <a href="#experience" class="hover:text-white">Experience</a>
+            <a href="#certifications" class="hover:text-white">Certifications</a>
+            <a href="#education" class="hover:text-white">Education</a>
             <a href="https://www.linkedin.com/in/shivasai-kandoji-787bb518a/" class="hover:text-white">linkedin</a>
-            <a href="https://drive.google.com/drive/folders/1h65kWgYZRzWcfDnm0BxpISKsi4CfwrHX?usp=sharing" class="ml-2 inline-block px-3 py-1 rounded-md border border-slate-600 text-sm">Download CV</a>
+            <a href="https://drive.google.com/drive/folders/1h65kWgYZRzWcfDnm0BxpISKsi4CfwrHX?usp=sharing" class="ml-2 inline-block px-4 py-2 rounded-md text-sm" style="background: var(--nf-red); color: #fff;">Download CV</a>
           </nav>
 
           <div class="md:hidden">
@@ -63,6 +115,8 @@
           <a href="#projects" class="block">Projects</a>
           <a href="#skills" class="block">Skills</a>
           <a href="#experience" class="block">Experience</a>
+          <a href="#certifications" class="block">Certifications</a>
+          <a href="#education" class="block">Education</a>
           <a href="https://www.linkedin.com/in/shivasai-kandoji-787bb518a/" class="block">linkedin</a>
 
         </div>
@@ -71,26 +125,33 @@
 
     <!-- HERO -->
     <main id="home">
-      <section class="gradient-hero py-20">
+      <section class="nf-hero min-h-[85vh] sm:min-h-[92vh] flex items-center py-16 sm:py-24">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row items-center gap-10">
 
-          <div class="w-full lg:w-1/2 text-center lg:text-left">
-            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight">Hi — I'm <span class="text-BLACK">Kandoji Shivasai</span></h1>
-            <p class="mt-4 text-slate-100/90 max-w-xl">I build mobile apps that people enjoy using. Flutter specialist with strong backend experience in Node.js, SQLite, and Firebase — focused on performance, offline-first UX and delightful UI.</p>
-
-            <div class="mt-6 flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
-              <a href="#projects" class="inline-block px-6 py-3 rounded-md bg-slate-900/80 hover:bg-slate-800 shadow">See projects</a>
-              <a href="#about" class="inline-block px-6 py-3 rounded-md border border-white/20">Contact me</a>
+          <div class="w-full lg:w-1/2 text-center lg:text-left reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full nf-surface-2 text-xs uppercase tracking-wider" style="color: var(--nf-muted);">
+              <span class="inline-block w-2 h-2 rounded-full" style="background: var(--nf-red);"></span>
+              <span>Mobile Application Developer</span>
             </div>
 
-            <div class="mt-6 text-sm text-slate-200/80">
-              <strong>Role:</strong> Mobile App Developer • <strong>Location:</strong> Hyderabad, India
+            <h1 class="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight">Kandoji Shivasai</h1>
+            <p class="mt-4 max-w-xl" style="color: var(--nf-muted);">I build mobile apps that people enjoy using. Flutter specialist with backend experience in Node.js, SQLite, and Firebase — focused on performance, offline-first UX and delightful UI.</p>
+
+            <div class="mt-6 flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
+              <a href="#projects" class="inline-block px-6 py-3 rounded-md nf-shadow" style="background: var(--nf-red); color: #fff;">See projects</a>
+              <a href="#about" class="inline-block px-6 py-3 rounded-md nf-surface">Contact me</a>
+            </div>
+
+            <div class="mt-6 text-sm" style="color: var(--nf-muted);">
+              <span class="font-semibold" style="color: var(--nf-text);">Profile</span>
+              <span class="mx-2">•</span>
+              <span>Hyderabad, India</span>
             </div>
           </div>
 
-          <div class="w-full lg:w-1/2 flex justify-center">
-            <div class="w-64 h-64 rounded-2xl overflow-hidden shadow-2xl border border-white/6 bg-gradient-to-br from-sky-700 to-indigo-700 flex items-center justify-center">
-              <img src="images/profile.jpg" alt="Your photo" class="rounded-full w-44 h-44 object-cover border-4 border-white/10" />
+          <div class="w-full lg:w-1/2 flex justify-center reveal">
+            <div class="w-72 h-72 rounded-2xl overflow-hidden nf-shadow nf-surface flex items-center justify-center">
+              <img src="images/profile.jpg" alt="Your photo" class="rounded-2xl w-full h-full object-cover" />
             </div>
           </div>
         </div>
@@ -98,16 +159,17 @@
 
     
       <!-- PROJECTS -->
-      <section id="projects" class="bg-slate-900/40 py-12">
+      <section id="projects" class="py-12 reveal">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 class="text-2xl font-semibold">Featured projects</h2>
-          <p class="text-slate-400 mt-2">Selected work — click to view details.</p>
+          <p class="mt-2" style="color: var(--nf-muted);">Projects i worked on.</p>
 
-          <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="mt-6 overflow-x-auto pb-4 row-scroll" style="-webkit-overflow-scrolling: touch;">
+            <div class="flex gap-4 sm:gap-6 min-w-max">
 
             <!-- Project card (repeat) -->
              <!--Loadmiles App-->
-            <article class="bg-slate-800 rounded-lg overflow-hidden shadow hover:scale-[1.01] transition-transform">
+            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
               <div class="project-thumb" style="background-image:url('images/loadmiles.jpg');">
 
               </div>
@@ -123,7 +185,7 @@
 
 
                     <!--PIRAMIDS App-->
-            <article class="bg-slate-800 rounded-lg overflow-hidden shadow hover:scale-[1.01] transition-transform">
+            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
               <div class="project-thumb" style="background-image:url('images/piramids.png');">
 
               </div>
@@ -138,7 +200,7 @@
             </article>
 
                  <!--Steelgym App-->
-            <article class="bg-slate-800 rounded-lg overflow-hidden shadow hover:scale-[1.01] transition-transform">
+            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
               <div class="project-thumb" style="background-image:url('images/steelgym.png');">
 
               </div>
@@ -153,7 +215,7 @@
             </article>
 
                 <!--Ufinity app-->
-            <article class="bg-slate-800 rounded-lg overflow-hidden shadow hover:scale-[1.01] transition-transform">
+            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
               <div class="project-thumb" style="background-image:url('images/ufinity.png');">
 
               </div>
@@ -168,7 +230,7 @@
             </article>
 
                <!--string-up web app-->
-            <article class="bg-slate-800 rounded-lg overflow-hidden shadow hover:scale-[1.01] transition-transform">
+            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
               <div class="project-thumb" style="background-image:url('images/stringup.png');">
 
               </div>
@@ -183,7 +245,7 @@
             </article>
           
              <!--COLD CHAIN app-->
-            <article class="bg-slate-800 rounded-lg overflow-hidden shadow hover:scale-[1.01] transition-transform">
+            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
               <div class="project-thumb" style="background-image:url('');">
 
               </div>
@@ -197,7 +259,7 @@
               </div>
             </article>
 
-              <article class="bg-slate-800 rounded-lg overflow-hidden shadow hover:scale-[1.01] transition-transform">
+              <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
               <div class="project-thumb" style="background-image:url('');">
 
               </div>
@@ -227,7 +289,7 @@
             </article>
 
             <!--Happytailz app-->
-            <article class="bg-slate-800 rounded-lg overflow-hidden shadow hover:scale-[1.01] transition-transform">
+            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
               <div class="project-thumb" style="background-image:url('images/icon.jpg');">
 
               </div>
@@ -242,33 +304,29 @@
             </article>
 
 
-          
-
-
-            <!-- more project cards... -->
-
+                      </div>
           </div>
         </div>
       </section>
 
       <!-- SKILLS -->
-      <section id="skills" class="py-12">
+      <section id="skills" class="py-12 reveal">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 class="text-2xl font-semibold">Skills</h2>
           <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 ">
-            <div class="p-3 bg-slate-800 rounded">
+            <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">Flutter</div>
               <div class="text-sm text-slate-400 mt-1">State management, Widgets, Performance</div>
             </div>
-            <div class="p-3 bg-slate-800 rounded">
+            <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">Dart</div>
               <div class="text-sm text-slate-400 mt-1">Async, Streams, Null-safety</div>
             </div>
-            <div class="p-3 bg-slate-800 rounded">
+            <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">Node.js</div>
               <div class="text-sm text-slate-400 mt-1">APIs, Express, Auth</div>
             </div>
-            <div class="p-3 bg-slate-800 rounded">
+            <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">SQLite / Firebase</div>
               <div class="text-sm text-slate-400 mt-1">Local DB, Sync & Auth</div>
             </div>
@@ -277,17 +335,17 @@
       </section>
 
       <!-- EXPERIENCE -->
-      <section id="experience" class="bg-slate-900/40 py-12">
+      <section id="experience" class="py-12 reveal">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 class="text-2xl font-semibold">Experience</h2>
           <div class="mt-6 space-y-4">
-            <div class="p-4 bg-slate-800 rounded-lg">
+            <div class="p-5 rounded-xl nf-surface">
               <div class="flex items-start justify-between">
                 <div>
                   <div class="font-semibold">Mobile Application Developer — Loadmiles Pvt Ltd</div>
                   <div class="text-sm text-slate-400">Hyderabad | 2024 – Present</div>
                 </div>
-                <div class="text-sm text-slate-300">Flutter • Node.js • SQLite</div>
+                <div class="text-sm" style="color: var(--nf-muted);">Flutter • Node.js • SQLite</div>
               </div>
               <ul class="mt-3 list-disc list-inside text-slate-400 text-sm">
                 <li>Built and maintained Flutter apps with offline sync.</li>
@@ -301,13 +359,13 @@
             </div>
 
             <!---->
-            <div class="p-4 bg-slate-800 rounded-lg">
+            <div class="p-5 rounded-xl nf-surface">
               <div class="flex items-start justify-between">
                 <div>
                   <div class="font-semibold">Mobile Application Developer - BeamX TechLabs Private Limited</div>
                   <div class="text-sm text-slate-400">2024 – 2024</div>
                 </div>
-                <div class="text-sm text-slate-300">Android • Flutter</div>
+                <div class="text-sm" style="color: var(--nf-muted);">Android • Flutter</div>
               </div>
               <ul class="mt-3 list-disc list-inside text-slate-400 text-sm">
                 <li>BeamX Tech Labs is sister company of GeekBull Consulting, based on project here i Published apps to Google Play Store and integrated Flutter Auth & Firestore.</li>
@@ -322,13 +380,13 @@
             </div>
 
             <!---->
-            <div class="p-4 bg-slate-800 rounded-lg">
+            <div class="p-5 rounded-xl nf-surface">
               <div class="flex items-start justify-between">
                 <div>
                   <div class="font-semibold">Android Developer - GeekBull Consulting</div>
                   <div class="text-sm text-slate-400">2021 – 2024</div>
                 </div>
-                <div class="text-sm text-slate-300">Android • Flutter</div>
+                <div class="text-sm" style="color: var(--nf-muted);">Android • Flutter</div>
               </div>
               <ul class="mt-3 list-disc list-inside text-slate-400 text-sm">
                 <li>Transitioned from native Android to Flutter for building high-performance cross-platform apps.</li>
@@ -347,40 +405,40 @@
 
 
       <!-- Certificates -->
-      <section id="skills" class="py-12">
+      <section id="certifications" class="py-12 reveal">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 class="text-2xl font-semibold">Certificate and Achievements</h2>
           <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 ">
 
-            <div class="p-3 bg-slate-800 rounded">
+            <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">Best employ of the month</div>
               <div class="text-sm text-slate-400 mt-1">got best employ of the month at beamx techlabs</div>
             </div>
 
-            <div class="p-3 bg-slate-800 rounded">
+            <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">Google Firebase</div>
               <div class="text-sm text-slate-400 mt-1">web app with Firebase and earned a badge from the Google Developer Program.</div>
             </div>
-            <div class="p-3 bg-slate-800 rounded">
+            <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">Google store Certificate</div>
               <div class="text-sm text-slate-400 mt-1">Google Play Academy – Store Listing Certificate</div>
             </div>
-            <div class="p-3 bg-slate-800 rounded">
+            <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">Android</div>
               <div class="text-sm text-slate-400 mt-1">Android Development online course with Great Learning</div>
             </div>
 
-             <div class="p-3 bg-slate-800 rounded">
+             <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">python</div>
               <div class="text-sm text-slate-400 mt-1">Received a certification of participation for Machine Learning Using python</div>
             </div>
 
-             <div class="p-3 bg-slate-800 rounded">
+             <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">Salesforce</div>
               <div class="text-sm text-slate-400 mt-1">Received a certification of participation for android workshop form Attended a 5days Workshop Conducted by Salesforce</div>
             </div>
         
-            <div class="p-3 bg-slate-800 rounded">
+            <div class="p-4 rounded-xl nf-surface nf-card">
               <div class="font-medium">Team lead</div>
               <div class="text-sm text-slate-400 mt-1">organized a college fest in 2019 with a team of 30 members</div>
             </div>
@@ -391,41 +449,41 @@
 
 
         <!-- Education -->
-      <section id="experience" class="bg-slate-900/40 py-12">
+      <section id="education" class="py-12 reveal">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 class="text-2xl font-semibold">Education</h2>
           <div class="mt-6 space-y-4">
 
-            <div class="p-4 bg-slate-800 rounded-lg">
+            <div class="p-5 rounded-xl nf-surface">
               <div class="flex items-start justify-between">
                 <div>
                   <div class="font-semibold">PALLAVI ENGINEERING COLLEGE</div>
                   <div class="text-sm text-slate-400">July 2021 | Hyderabad</div>
                 </div>
-                <div class="text-sm text-slate-300">Bachelor of Technology IN Computer Science</div>
+                <div class="text-sm" style="color: var(--nf-muted);">Bachelor of Technology IN Computer Science</div>
               </div>
         
             </div>
 
             <!---->
-             <div class="p-4 bg-slate-800 rounded-lg">
+             <div class="p-5 rounded-xl nf-surface">
               <div class="flex items-start justify-between">
                 <div>
                   <div class="font-semibold">Srigayatri Junior collage</div>
                   <div class="text-sm text-slate-400">May 2018 | Hyderabad</div>
                 </div>
-                <div class="text-sm text-slate-300">MPC</div>
+                <div class="text-sm" style="color: var(--nf-muted);">MPC</div>
               </div>
         
             </div>
 
-             <div class="p-4 bg-slate-800 rounded-lg">
+             <div class="p-5 rounded-xl nf-surface">
               <div class="flex items-start justify-between">
                 <div>
                   <div class="font-semibold">Kanya gurukul High school</div>
                   <div class="text-sm text-slate-400">May 2015 | Hyderabad</div>
                 </div>
-                <div class="text-sm text-slate-300">SSC</div>
+                <div class="text-sm" style="color: var(--nf-muted);">SSC</div>
               </div>
         
             </div>
@@ -436,28 +494,28 @@
       </section>
 
        <!-- ABOUT + HIGHLIGHTS -->
-      <section id="about" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <section id="about" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 reveal">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div class="lg:col-span-2">
             <h2 class="text-2xl font-semibold">About me</h2>
-            <p class="mt-3 text-slate-300">I'm a mobile developer with 4+ years building apps using Flutter and Node.js. I enjoy solving product problems with clean code, good tests, and user-centered design. I’ve built production apps with offline-first sync, scanner integrations, and optimized local databases.</p>
+            <p class="mt-3" style="color: var(--nf-muted);">I'm a mobile developer with 4+ years building apps using Flutter and Node.js. I enjoy solving product problems with clean code, good tests, and user-centered design. I’ve built production apps with offline-first sync, scanner integrations, and optimized local databases.</p>
 
             <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="p-4 bg-slate-800 rounded-lg">
-                <div class="text-sm text-slate-400">Primary Stack</div>
+              <div class="p-5 rounded-xl nf-surface nf-card">
+                <div class="text-sm" style="color: var(--nf-muted);">Primary Stack</div>
                 <div class="mt-2 font-medium">Flutter • Dart • Node.js • SQLite</div>
               </div>
-              <div class="p-4 bg-slate-800 rounded-lg">
-                <div class="text-sm text-slate-400">What I build</div>
+              <div class="p-5 rounded-xl nf-surface nf-card">
+                <div class="text-sm" style="color: var(--nf-muted);">What I build</div>
                 <div class="mt-2 font-medium">Logistics apps • Offline sync • Mobile-first UI</div>
               </div>
             </div>
           </div>
 
-          <aside class="p-4 bg-slate-800 rounded-lg">
-            <div class="text-sm text-slate-400">Contact</div>
+          <aside class="p-5 rounded-xl nf-surface nf-shadow">
+            <div class="text-sm" style="color: var(--nf-muted);">Contact</div>
             <div class="mt-2 font-medium">sais31348@gmail.com</div>
-            <div class="mt-4 text-sm text-slate-400">Quick Links</div>
+            <div class="mt-4 text-sm" style="color: var(--nf-muted);">Quick Links</div>
             <ul class="mt-2 text-sm space-y-2">
               <li><a href="#projects">Projects</a></li>
               <li><a href="#skills">Skills</a></li>
@@ -469,24 +527,24 @@
 
 
       <!-- FOOTER -->
-      <footer class="border-t border-slate-800 py-6">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400 text-sm">
-          © "KANDOJI SHIVASAI" • Built with ❤️ • <a href="#" class="underline">Privacy</a>
+      <footer class="py-8" style="border-top: 1px solid var(--nf-border);">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm" style="color: var(--nf-muted);">
+          © "KANDOJI SHIVASAI" • <span style="color: var(--nf-red);">Mobile App Developer</span>
         </div>
       </footer>
     </main>
 
     <!-- MODAL (project details) -->
-    <div id="modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4">
-      <div class="max-w-2xl w-full bg-slate-900 rounded-lg p-6">
+    <div id="modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4">
+      <div class="max-w-2xl w-full rounded-xl p-6 nf-shadow nf-surface">
         <div class="flex items-start justify-between">
           <h3 id="modalTitle" class="text-lg font-semibold"></h3>
-          <button onclick="closeModal()" aria-label="Close" class="text-slate-400">✕</button>
+          <button onclick="closeModal()" aria-label="Close" style="color: var(--nf-muted);">✕</button>
         </div>
-        <p id="modalBody" class="mt-3 text-slate-300"></p>
+        <p id="modalBody" class="mt-3" style="color: var(--nf-muted);"></p>
         <div class="mt-4 flex gap-3">
-          <a id="modalLink" href="#" class="px-4 py-2 rounded border border-slate-700">View repo</a>
-          <button onclick="closeModal()" class="px-4 py-2 rounded bg-slate-800">Close</button>
+          <a id="modalLink" href="#" class="px-4 py-2 rounded-md" style="background: var(--nf-red); color: #fff;">View repo</a>
+          <button onclick="closeModal()" class="px-4 py-2 rounded-md nf-surface">Close</button>
         </div>
       </div>
     </div>
@@ -504,10 +562,46 @@
       function openModal(title, body) {
         document.getElementById('modalTitle').textContent = title;
         document.getElementById('modalBody').textContent = body;
-        document.getElementById('modal').classList.remove('hidden');
+        const modal = document.getElementById('modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
       }
       function closeModal() {
-        document.getElementById('modal').classList.add('hidden');
+        const modal = document.getElementById('modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+
+      // Scroll reveal
+      const prefersReducedMotion = globalThis.matchMedia && globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Add animated reveals to project cards with stagger + alternating direction
+      const projectCards = Array.from(document.querySelectorAll('#projects article.nf-card'));
+      projectCards.forEach((card, idx) => {
+        const dirClass = idx % 2 === 0 ? 'reveal-left' : 'reveal-right';
+        card.classList.add(dirClass);
+        card.style.transitionDelay = `${Math.min(idx, 12) * 70}ms`;
+      });
+
+      const revealEls = Array.from(document.querySelectorAll('.reveal, .reveal-left, .reveal-right'));
+
+      if (prefersReducedMotion) {
+        revealEls.forEach((el) => el.classList.add('is-visible'));
+      } else if ('IntersectionObserver' in globalThis) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -10% 0px' }
+        );
+        revealEls.forEach((el) => io.observe(el));
+      } else {
+        revealEls.forEach((el) => el.classList.add('is-visible'));
       }
 
       // Fake contact handler (replace with real API or Netlify Forms)
