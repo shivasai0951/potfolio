@@ -6,618 +6,422 @@
     <meta name="description" content="Kandoji Shivasai — Mobile App Developer (Flutter, Node.js). Portfolio showcasing apps, projects, skills and contact." />
     <title>Kandoji Shivasai — Portfolio</title>
 
-    <!-- Tailwind (CDN for quick prototype) -->
+    <!-- Tailwind (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Favicon (replace with your own) -->
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
-
-    <!-- Simple meta for SEO & Social cards -->
-    <meta property="og:title" content="Kandoji Shivasai — Mobile App Developer" />
-    <meta property="og:description" content="Portfolio — Flutter & Node.js apps, projects, skills, contact." />
-    <meta property="og:type" content="website" />
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
-      /* Small custom tweaks */
       :root {
-        --nf-bg: #0b0b0f;
-        --nf-panel: rgba(255, 255, 255, 0.06);
-        --nf-panel-2: rgba(255, 255, 255, 0.08);
-        --nf-border: rgba(255, 255, 255, 0.10);
-        --nf-text: rgba(255, 255, 255, 0.92);
-        --nf-muted: rgba(255, 255, 255, 0.62);
+        --nf-bg: #07070a;
+        --nf-panel: rgba(255, 255, 255, 0.03);
+        --nf-border: rgba(255, 255, 255, 0.08);
         --nf-red: #e50914;
       }
-
-      .glass { backdrop-filter: blur(10px); background-color: var(--nf-panel); }
-      .nf-surface { background: var(--nf-panel); border: 1px solid var(--nf-border); }
-      .nf-surface-2 { background: var(--nf-panel-2); border: 1px solid var(--nf-border); }
-      .nf-shadow { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
-
-      .nf-hero {
-        background:
-          radial-gradient(1200px 600px at 70% 20%, rgba(229, 9, 20, 0.18), transparent 60%),
-          radial-gradient(900px 500px at 20% 10%, rgba(59, 130, 246, 0.18), transparent 55%),
-          linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.90));
+      body {
+        background-color: var(--nf-bg);
+        color: white;
+        overflow-x: hidden;
       }
-
+      #bg-3d {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+        pointer-events: none;
+      }
+      .glass {
+        backdrop-filter: blur(12px);
+        background: rgba(7, 7, 10, 0.85);
+        border-bottom: 1px solid var(--nf-border);
+      }
+      .nf-card {
+        background: var(--nf-panel);
+        border: 1px solid var(--nf-border);
+        transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+        backdrop-filter: blur(8px);
+      }
+      .nf-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: var(--nf-red);
+        box-shadow: 0 15px 30px rgba(229, 9, 20, 0.15);
+      }
       .project-thumb {
+        height: 180px;
         background-size: cover;
         background-position: center;
-        background-repeat: no-repeat;
-        height: 176px;
-        width: 100%;
+        transition: transform 0.6s ease;
       }
-
-      @media (min-width: 640px) {
-        .project-thumb { height: 190px; }
+      .nf-card:hover .project-thumb {
+        transform: scale(1.05);
       }
-
-      /* Smooth section reveal */
-      .reveal { opacity: 0; transform: translateY(14px); transition: opacity 700ms ease, transform 700ms ease; }
-      .reveal.is-visible { opacity: 1; transform: translateY(0); }
-
-      .reveal-left { opacity: 0; transform: translateX(-16px); transition: opacity 700ms ease, transform 700ms ease; }
-      .reveal-right { opacity: 0; transform: translateX(16px); transition: opacity 700ms ease, transform 700ms ease; }
-      .reveal-left.is-visible, .reveal-right.is-visible { opacity: 1; transform: translateX(0); }
-
-      /* Horizontal rows (Netflix-like) */
-      .row-scroll { scroll-snap-type: x mandatory; }
-      .row-scroll > * { scroll-snap-align: start; }
-    
-      /* Card micro-interactions */
-      .nf-card { transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease; }
-      .nf-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 18px 38px rgba(0, 0, 0, 0.55); border-color: rgba(255,255,255,0.16); }
-
-      @media (prefers-reduced-motion: reduce) {
-        .reveal, .reveal-left, .reveal-right { transition: none !important; transform: none !important; opacity: 1 !important; }
-        .nf-card { transition: none !important; }
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.8s ease-out;
+      }
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
       }
     </style>
   </head>
+  <body>
+    <canvas id="bg-3d"></canvas>
 
-  <body class="leading-relaxed antialiased" style="background: var(--nf-bg); color: var(--nf-text);">
-    <!-- NAV -->
-    <header class="sticky top-0 z-40 backdrop-blur-md glass" style="border-bottom: 1px solid var(--nf-border);">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <a href="#home" class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-md flex items-center justify-center font-bold" style="background: var(--nf-red); color: #fff;">KS</div>
-            <div class="hidden sm:block">
-              <div class="font-semibold">Kandoji Shivasai</div>
-              <div class="text-xs" style="color: var(--nf-muted);">Mobile App Developer</div>
-            </div>
-          </a>
-
-          <nav class="hidden md:flex items-center gap-6">
-            <a href="#projects" class="hover:text-white">Projects</a>
-            <a href="#skills" class="hover:text-white">Skills</a>
-            <a href="#experience" class="hover:text-white">Experience</a>
-            <a href="#certifications" class="hover:text-white">Certifications</a>
-            <a href="#education" class="hover:text-white">Education</a>
-            <a href="https://www.linkedin.com/in/shivasai-kandoji-787bb518a/" class="hover:text-white">linkedin</a>
-            <a href="https://drive.google.com/drive/folders/1h65kWgYZRzWcfDnm0BxpISKsi4CfwrHX?usp=sharing" class="ml-2 inline-block px-4 py-2 rounded-md text-sm" style="background: var(--nf-red); color: #fff;">Download CV</a>
-          </nav>
-
-          <div class="md:hidden">
-            <button id="navToggle" aria-label="Open menu" class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400">
-              <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
+    <header class="sticky top-0 z-50 glass py-4">
+      <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-red-600 flex items-center justify-center font-bold rounded">KS</div>
+          <span class="font-bold text-xl hidden sm:inline">Kandoji Shivasai</span>
         </div>
+        <nav class="hidden md:flex gap-8 font-medium">
+          <a href="#projects" class="hover:text-red-500 transition-colors">Projects</a>
+          <a href="#skills" class="hover:text-red-500 transition-colors">Skills</a>
+          <a href="#experience" class="hover:text-red-500 transition-colors">Experience</a>
+          <a href="#about" class="hover:text-red-500 transition-colors">About</a>
+        </nav>
+        <button id="navToggle" class="md:hidden p-2 text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
       </div>
-
-      <!-- Mobile nav -->
-      <div id="mobileNav" class="hidden md:hidden border-t border-slate-700">
-        <div class="px-4 pt-4 pb-6 space-y-3">
-          <a href="#projects" class="block">Projects</a>
-          <a href="#skills" class="block">Skills</a>
-          <a href="#experience" class="block">Experience</a>
-          <a href="#certifications" class="block">Certifications</a>
-          <a href="#education" class="block">Education</a>
-          <a href="https://www.linkedin.com/in/shivasai-kandoji-787bb518a/" class="block">linkedin</a>
-
-        </div>
+      <div id="mobileNav" class="hidden md:hidden bg-black/90 p-6 space-y-4">
+        <a href="#projects" class="block">Projects</a>
+        <a href="#skills" class="block">Skills</a>
+        <a href="#experience" class="block">Experience</a>
       </div>
     </header>
 
-    <!-- HERO -->
-    <main id="home">
-      <section class="nf-hero min-h-[85vh] sm:min-h-[92vh] flex items-center py-16 sm:py-24">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row items-center gap-10">
-
-          <div class="w-full lg:w-1/2 text-center lg:text-left reveal">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full nf-surface-2 text-xs uppercase tracking-wider" style="color: var(--nf-muted);">
-              <span class="inline-block w-2 h-2 rounded-full" style="background: var(--nf-red);"></span>
-              <span>Mobile Application Developer</span>
+    <main class="max-w-6xl mx-auto px-6">
+      <!-- HERO -->
+      <section id="home" class="min-h-[85vh] flex items-center py-20">
+        <div class="w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-12">
+          <div class="w-full lg:w-1/2 reveal">
+            <div class="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs uppercase tracking-widest text-red-500 mb-6">
+              Mobile Application Developer
             </div>
-
-            <h1 class="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight">Kandoji Shivasai</h1>
-            <p class="mt-4 max-w-xl" style="color: var(--nf-muted);">I build mobile apps that people enjoy using. Flutter specialist with backend experience in Node.js, SQLite, and Firebase — focused on performance, offline-first UX and delightful UI.</p>
-
-            <div class="mt-6 flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
-              <a href="#projects" class="inline-block px-6 py-3 rounded-md nf-shadow" style="background: var(--nf-red); color: #fff;">See projects</a>
-              <a href="#about" class="inline-block px-6 py-3 rounded-md nf-surface">Contact me</a>
+            <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tighter">
+              KANDOJI<br><span class="text-red-600">SHIVASAI</span>
+            </h1>
+            <p class="text-xl text-gray-400 max-w-xl leading-relaxed">
+              I build mobile apps that people enjoy using. Flutter specialist with backend experience in Node.js, SQLite, and Firebase — focused on performance, offline-first UX and delightful UI.
+            </p>
+            <div class="flex flex-wrap gap-4 mt-10">
+              <a href="#projects" class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-red-600/20">See Projects</a>
+              <a href="#about" class="bg-white/5 hover:bg-white/10 border border-white/10 px-8 py-3 rounded-xl font-bold transition-all">Contact Me</a>
             </div>
-
-            <div class="mt-6 text-sm" style="color: var(--nf-muted);">
-              <span class="font-semibold" style="color: var(--nf-text);">Profile</span>
-              <span class="mx-2">•</span>
+            <div class="mt-8 text-sm text-gray-400 flex items-center gap-2">
+              <span class="text-white font-medium">Profile</span>
+              <span>•</span>
               <span>Hyderabad, India</span>
             </div>
           </div>
 
           <div class="w-full lg:w-1/2 flex justify-center reveal">
-            <div class="w-72 h-72 rounded-2xl overflow-hidden nf-shadow nf-surface flex items-center justify-center">
-              <img src="images/profile.jpg" alt="Your photo" class="rounded-2xl w-full h-full object-cover" />
+            <div class="w-72 h-72 md:w-80 md:h-80 rounded-2xl overflow-hidden shadow-2xl border border-white/10 relative group">
+              <div class="absolute inset-0 bg-red-600/10 group-hover:bg-transparent transition-colors z-10 pointer-events-none"></div>
+              <img src="images/profile.jpg" alt="Kandoji Shivasai" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
         </div>
       </section>
 
-    
       <!-- PROJECTS -->
-      <section id="projects" class="py-12 reveal">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl font-semibold">Featured projects</h2>
-          <p class="mt-2" style="color: var(--nf-muted);">Projects i worked on.</p>
-
-          <div class="mt-6 overflow-x-auto pb-4 row-scroll" style="-webkit-overflow-scrolling: touch;">
-            <div class="flex gap-4 sm:gap-6 min-w-max">
-
-            <!-- Project card (repeat) -->
-             <!--Loadmiles App-->
-            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
-              <div class="project-thumb" style="background-image:url('images/loadmiles.jpg');">
-
+      <section id="projects" class="py-24 reveal">
+        <h2 class="text-4xl font-black mb-12 flex items-center gap-4">
+          <span class="w-12 h-1 bg-red-600"></span> Projects
+        </h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Loadmiles -->
+          <article class="nf-card rounded-2xl overflow-hidden group">
+            <div class="project-thumb" style="background-image:url('images/loadmiles.jpg');"></div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold">Loadmiles App</h3>
+              <p class="text-sm text-gray-400 mt-2 mb-4">Logistics app built with Flutter, local Sql storage, and Node.js backend.</p>
+              <div class="flex justify-between items-center mt-4">
+                <span class="text-xs text-red-500 font-mono">Flutter • SQLite</span>
+                <button onclick="openModal('Loadmiles','A logistics management app with offline first sync.')" class="text-xs uppercase font-bold tracking-widest hover:text-red-500">Details &rarr;</button>
               </div>
-              <div class="p-4">
-                <h3 class="font-semibold">Loadmiles App</h3>
-                <p class="mt-2 text-sm text-slate-400">Logistics app built with Flutter, local Sql storage, and Node.js backend.</p>
-                <div class="mt-3 flex items-center justify-between">
-                  <div class="text-sm text-slate-300">Flutter • SQLite</div>
-                  <button class="text-sm px-3 py-1 rounded-md border border-slate-600" onclick="openModal('Loadmiles','A logistics management app with offline first sync, trip tracking and scanner integration.')">Details</button>
-                </div>
+            </div>
+          </article>
+
+          <!-- PIRAMIDS -->
+          <article class="nf-card rounded-2xl overflow-hidden group">
+            <div class="project-thumb" style="background-image:url('images/piramids.png');"></div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold">Piramids App</h3>
+              <p class="text-sm text-gray-400 mt-2 mb-4">Integrated property management and financial management solution.</p>
+              <div class="flex justify-between items-center mt-4">
+                <span class="text-xs text-red-500 font-mono">Flutter • SQLite</span>
+                <button onclick="openModal('Piramids','Property management solution.')" class="text-xs uppercase font-bold tracking-widest hover:text-red-500">Details &rarr;</button>
               </div>
-            </article>
+            </div>
+          </article>
 
-
-                    <!--PIRAMIDS App-->
-            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
-              <div class="project-thumb" style="background-image:url('images/piramids.png');">
-
+          <!-- Steelgym -->
+          <article class="nf-card rounded-2xl overflow-hidden group">
+            <div class="project-thumb" style="background-image:url('images/steelgym.png');"></div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold">Steelgym App</h3>
+              <p class="text-sm text-gray-400 mt-2 mb-4">Gym application where user will pay as they go fitness model.</p>
+              <div class="flex justify-between items-center mt-4">
+                <span class="text-xs text-red-500 font-mono">Flutter • Node.js</span>
+                <button onclick="openModal('Steelgym','Pay as you go fitness model.')" class="text-xs uppercase font-bold tracking-widest hover:text-red-500">Details &rarr;</button>
               </div>
-              <div class="p-4">
-                <h3 class="font-semibold">Piramids App</h3>
-                <p class="mt-2 text-sm text-slate-400">Logistics app built with Flutter, local Sql storage, and Node.js backend.</p>
-                <div class="mt-3 flex items-center justify-between">
-                  <div class="text-sm text-slate-300">Flutter • SQLite</div>
-                  <button class="text-sm px-3 py-1 rounded-md border border-slate-600" onclick="openModal('PIRAMIDS','PIRAMIDS is an integrated property management, rental operations and financial management solution that will help in automating all the laborious tasks, allowing you to stay on top of your properties.')">Details</button>
-                </div>
-              </div>
-            </article>
+            </div>
+          </article>
 
-                 <!--Steelgym App-->
-            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
-              <div class="project-thumb" style="background-image:url('images/steelgym.png');">
-
+          <!-- Ufinity -->
+          <article class="nf-card rounded-2xl overflow-hidden group">
+            <div class="project-thumb" style="background-image:url('images/ufinity.png');"></div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold">Ufinity app</h3>
+              <p class="text-sm text-gray-400 mt-2 mb-4">Identify health risks early on and set preventives health goals.</p>
+              <div class="flex justify-between items-center mt-4">
+                <span class="text-xs text-red-500 font-mono">Android Java • SQL</span>
+                <button onclick="openModal('Ufinity','Identify health risks early.')" class="text-xs uppercase font-bold tracking-widest hover:text-red-500">Details &rarr;</button>
               </div>
-              <div class="p-4">
-                <h3 class="font-semibold">Steelgym App</h3>
-                <p class="mt-2 text-sm text-slate-400">gym app built with Flutter, and Node.js backend.</p>
-                <div class="mt-3 flex items-center justify-between">
-                  <div class="text-sm text-slate-300">Flutter </div>
-                  <button class="text-sm px-3 py-1 rounded-md border border-slate-600" onclick="openModal('Steelgym','Steelgym is a gym application where user will pay as they go gym acces makes fitness fair, flexable and affardable for eyeryone.he laborious tasks, allowing you to stay on top of your properties.')">Details</button>
-                </div>
-              </div>
-            </article>
+            </div>
+          </article>
 
-                <!--Ufinity app-->
-            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
-              <div class="project-thumb" style="background-image:url('images/ufinity.png');">
-
+          <!-- String-up -->
+          <article class="nf-card rounded-2xl overflow-hidden group">
+            <div class="project-thumb" style="background-image:url('images/stringup.png');"></div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold">String-up web app</h3>
+              <p class="text-sm text-gray-400 mt-2 mb-4">Badminton sports management for broken string collection.</p>
+              <div class="flex justify-between items-center mt-4">
+                <span class="text-xs text-red-500 font-mono">HTML • Firebase</span>
+                <button onclick="openModal('String-up','Badminton sports management.')" class="text-xs uppercase font-bold tracking-widest hover:text-red-500">Details &rarr;</button>
               </div>
-              <div class="p-4">
-                <h3 class="font-semibold">Ufinity app</h3>
-                <p class="mt-2 text-sm text-slate-400">Logistics app built with Android java, local Sql storage, and Sql backend.</p>
-                <div class="mt-3 flex items-center justify-between">
-                  <div class="text-sm text-slate-300">Android java • Sql</div>
-                  <button class="text-sm px-3 py-1 rounded-md border border-slate-600" onclick="openModal('Ufinity','ufinity enables patients & care providers to identify health risks early on, set preventives health goals as well as manage existing conditions.')">Details</button>
-                </div>
-              </div>
-            </article>
+            </div>
+          </article>
 
-               <!--string-up web app-->
-            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
-              <div class="project-thumb" style="background-image:url('images/stringup.png');">
-
+          <!-- Happytailz -->
+          <article class="nf-card rounded-2xl overflow-hidden group">
+            <div class="project-thumb" style="background-image:url('images/icon.jpg');"></div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold">Happytailz app</h3>
+              <p class="text-sm text-gray-400 mt-2 mb-4">Application to find nearby hospitals and dog specialists.</p>
+              <div class="flex justify-between items-center mt-4">
+                <span class="text-xs text-red-500 font-mono">Flutter • Nodejs</span>
+                <button onclick="openModal('Happytailz','Find nearby dog hospitals.')" class="text-xs uppercase font-bold tracking-widest hover:text-red-500">Details &rarr;</button>
               </div>
-              <div class="p-4">
-                <h3 class="font-semibold">String-up web app</h3>
-                <p class="mt-2 text-sm text-slate-400">Business app built with Html, Firebase backend.</p>
-                <div class="mt-3 flex items-center justify-between">
-                  <div class="text-sm text-slate-300">Html • Firebase</div>
-                  <button class="text-sm px-3 py-1 rounded-md border border-slate-600" onclick="openModal('String-up','String-up partner in badminton sports management. were user can select the string which was broken and stringup team will collect and repain that product.')">Details</button>
-                </div>
-              </div>
-            </article>
-          
-             <!--COLD CHAIN app-->
-            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
-              <div class="project-thumb" style="background-image:url('');">
-
-              </div>
-              <div class="p-4">
-                <h3 class="font-semibold">Cold chain app</h3>
-                <p class="mt-2 text-sm text-slate-400">Communication app built with Flutter.</p>
-                <div class="mt-3 flex items-center justify-between">
-                  <div class="text-sm text-slate-300">Flutter</div>
-                  <button class="text-sm px-3 py-1 rounded-md border border-slate-600" onclick="openModal('Cold chain','Cold chain is the simple application where carrier will send the status of load and admin will approve the load.')">Details</button>
-                </div>
-              </div>
-            </article>
-
-              <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
-              <div class="project-thumb" style="background-image:url('');">
-
-              </div>
-              <div class="p-4">
-                <h3 class="font-semibold">Doctor magnet app</h3>
-                <p class="mt-2 text-sm text-slate-400">Indestory tool app built with Flutter.</p>
-                <div class="mt-3 flex items-center justify-between">
-                  <div class="text-sm text-slate-300">Flutter</div>
-                  <button class="text-sm px-3 py-1 rounded-md border border-slate-600" onclick="openModal('Doctor magnet','Doctor magnet is an Indestory tool where user will selecte the bluetooth device and he can operate the full functionality with in the app only.')">Details</button>
-                </div>
-              </div>
-            </article>
-
-               <!--Mustuse app-->
-            <article class="bg-slate-800 rounded-lg overflow-hidden shadow hover:scale-[1.01] transition-transform">
-              <div class="project-thumb" style="background-image:url('');">
-
-              </div>
-              <div class="p-4">
-                <h3 class="font-semibold">Mustuse app</h3>
-                <p class="mt-2 text-sm text-slate-400">Communication app built with Android java, open source apis.</p>
-                <div class="mt-3 flex items-center justify-between">
-                  <div class="text-sm text-slate-300">Android java • Sql</div>
-                  <button class="text-sm px-3 py-1 rounded-md border border-slate-600" onclick="openModal('Mustuse','This is my enginerring final year project, in this app we can access all social media like facebook, google, education result,caluclator, text toi speech ,speech to text and etc with small size app')">Details</button>
-                </div>
-              </div>
-            </article>
-
-            <!--Happytailz app-->
-            <article class="nf-card nf-surface rounded-xl overflow-hidden w-[260px] sm:w-[300px]">
-              <div class="project-thumb" style="background-image:url('images/icon.jpg');">
-
-              </div>
-              <div class="p-4">
-                <h3 class="font-semibold">Happytailz app</h3>
-                <p class="mt-2 text-sm text-slate-400">Communication app built with Flutter, backend Nodejs .</p>
-                <div class="mt-3 flex items-center justify-between">
-                  <div class="text-sm text-slate-300">Flutter • Nodejs</div>
-                  <button class="text-sm px-3 py-1 rounded-md border border-slate-600" onclick="openModal('Happytailz','Happytailz is an application where user can select near by care hospitals and dog specialist for care.')">Details</button>
-                </div>
-              </div>
-            </article>
-
-
-                      </div>
-          </div>
+            </div>
+          </article>
         </div>
       </section>
 
       <!-- SKILLS -->
-      <section id="skills" class="py-12 reveal">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl font-semibold">Skills</h2>
-          <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 ">
-            <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">Flutter</div>
-              <div class="text-sm text-slate-400 mt-1">State management, Widgets, Performance</div>
-            </div>
-            <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">Dart</div>
-              <div class="text-sm text-slate-400 mt-1">Async, Streams, Null-safety</div>
-            </div>
-            <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">Node.js</div>
-              <div class="text-sm text-slate-400 mt-1">APIs, Express, Auth</div>
-            </div>
-            <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">SQLite / Firebase</div>
-              <div class="text-sm text-slate-400 mt-1">Local DB, Sync & Auth</div>
-            </div>
+      <section id="skills" class="py-24 reveal">
+        <h2 class="text-4xl font-black mb-12">Skills</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="nf-card p-8 rounded-2xl text-center">
+            <div class="text-3xl mb-4">📱</div>
+            <div class="font-bold">Flutter</div>
+            <div class="text-xs text-gray-500 uppercase mt-2">Expert</div>
+          </div>
+          <div class="nf-card p-8 rounded-2xl text-center">
+            <div class="text-3xl mb-4">🎯</div>
+            <div class="font-bold">Dart</div>
+            <div class="text-xs text-gray-500 uppercase mt-2">Expert</div>
+          </div>
+          <div class="nf-card p-8 rounded-2xl text-center">
+            <div class="text-3xl mb-4">🌐</div>
+            <div class="font-bold">Node.js</div>
+            <div class="text-xs text-gray-500 uppercase mt-2">Advanced</div>
+          </div>
+          <div class="nf-card p-8 rounded-2xl text-center">
+            <div class="text-3xl mb-4">💾</div>
+            <div class="font-bold">SQLite</div>
+            <div class="text-xs text-gray-500 uppercase mt-2">Advanced</div>
           </div>
         </div>
       </section>
 
       <!-- EXPERIENCE -->
-      <section id="experience" class="py-12 reveal">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl font-semibold">Experience</h2>
-          <div class="mt-6 space-y-4">
-            <div class="p-5 rounded-xl nf-surface">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="font-semibold">Mobile Application Developer — Loadmiles Pvt Ltd</div>
-                  <div class="text-sm text-slate-400">Hyderabad | 2024 – Present</div>
-                </div>
-                <div class="text-sm" style="color: var(--nf-muted);">Flutter • Node.js • SQLite</div>
+      <section id="experience" class="py-24 reveal">
+        <h2 class="text-4xl font-black mb-12">Experience</h2>
+        <div class="space-y-8">
+          <div class="nf-card p-8 rounded-2xl">
+            <div class="flex flex-col md:flex-row justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-bold">Mobile Application Developer</h3>
+                <p class="text-red-500">Loadmiles Pvt Ltd</p>
               </div>
-              <ul class="mt-3 list-disc list-inside text-slate-400 text-sm">
-                <li>Built and maintained Flutter apps with offline sync.</li>
-                <li>Implemented scanner integration and calendar features.</li>
-                <li>Implemented autosync features if internet exits.</li>
-                 <li>Implemented error or api fail detection with firebase analytics.</li>
-                 <li>handle appstore, playstore and amazon store application uploads.</li>
-                 <li>worked on webview for abmin dashboard.</li>
-                <li>Optimized local storage and JSON handling for performance.</li>
-              </ul>
+              <p class="text-sm text-gray-500">2024 – Present</p>
             </div>
-
-            <!---->
-            <div class="p-5 rounded-xl nf-surface">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="font-semibold">Mobile Application Developer - BeamX TechLabs Private Limited</div>
-                  <div class="text-sm text-slate-400">2024 – 2024</div>
-                </div>
-                <div class="text-sm" style="color: var(--nf-muted);">Android • Flutter</div>
-              </div>
-              <ul class="mt-3 list-disc list-inside text-slate-400 text-sm">
-                <li>BeamX Tech Labs is sister company of GeekBull Consulting, based on project here i Published apps to Google Play Store and integrated Flutter Auth & Firestore.</li>
-        
-                <li>Designed, developed, and maintained Android applications from scratch as the sole developer.</li>
-                 <li>Managed the entire app lifecycle — from planning, coding, testing, deployment, to Play Store release.</li>
-                 <li>Ensured clean, maintainable, and optimized code following best practices in Android development.</li>
-                <li>Integrated APIs, databases, and third-party libraries to enhance app performance and functionality.</li>
-                <li>Handled post-release maintenance, version updates, and user feedback independently.</li>
-
-                </ul>
-            </div>
-
-            <!---->
-            <div class="p-5 rounded-xl nf-surface">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="font-semibold">Android Developer - GeekBull Consulting</div>
-                  <div class="text-sm text-slate-400">2021 – 2024</div>
-                </div>
-                <div class="text-sm" style="color: var(--nf-muted);">Android • Flutter</div>
-              </div>
-              <ul class="mt-3 list-disc list-inside text-slate-400 text-sm">
-                <li>Transitioned from native Android to Flutter for building high-performance cross-platform apps.</li>
-                <li>Developed multiple Flutter projects with clean architecture using MVC pattern.</li>
-                 <li>Focused on code readability, reusability, and scalability for long-term project maintenance.</li>
-                 <li>Collaborated with backend and design teams to ensure seamless integration and UI consistency.</li>
-                <li>Improved app performance and UI responsiveness using state management and optimization techniques.</li>
-        
-              </ul>
-            </div>
-
-        
-          </div>
-        </div>
-      </section>
-
-
-      <!-- Certificates -->
-      <section id="certifications" class="py-12 reveal">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl font-semibold">Certificate and Achievements</h2>
-          <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 ">
-
-            <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">Best employ of the month</div>
-              <div class="text-sm text-slate-400 mt-1">got best employ of the month at beamx techlabs</div>
-            </div>
-
-            <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">Google Firebase</div>
-              <div class="text-sm text-slate-400 mt-1">web app with Firebase and earned a badge from the Google Developer Program.</div>
-            </div>
-            <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">Google store Certificate</div>
-              <div class="text-sm text-slate-400 mt-1">Google Play Academy – Store Listing Certificate</div>
-            </div>
-            <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">Android</div>
-              <div class="text-sm text-slate-400 mt-1">Android Development online course with Great Learning</div>
-            </div>
-
-             <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">python</div>
-              <div class="text-sm text-slate-400 mt-1">Received a certification of participation for Machine Learning Using python</div>
-            </div>
-
-             <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">Salesforce</div>
-              <div class="text-sm text-slate-400 mt-1">Received a certification of participation for android workshop form Attended a 5days Workshop Conducted by Salesforce</div>
-            </div>
-        
-            <div class="p-4 rounded-xl nf-surface nf-card">
-              <div class="font-medium">Team lead</div>
-              <div class="text-sm text-slate-400 mt-1">organized a college fest in 2019 with a team of 30 members</div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-        <!-- Education -->
-      <section id="education" class="py-12 reveal">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 class="text-2xl font-semibold">Education</h2>
-          <div class="mt-6 space-y-4">
-
-            <div class="p-5 rounded-xl nf-surface">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="font-semibold">PALLAVI ENGINEERING COLLEGE</div>
-                  <div class="text-sm text-slate-400">July 2021 | Hyderabad</div>
-                </div>
-                <div class="text-sm" style="color: var(--nf-muted);">Bachelor of Technology IN Computer Science</div>
-              </div>
-        
-            </div>
-
-            <!---->
-             <div class="p-5 rounded-xl nf-surface">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="font-semibold">Srigayatri Junior collage</div>
-                  <div class="text-sm text-slate-400">May 2018 | Hyderabad</div>
-                </div>
-                <div class="text-sm" style="color: var(--nf-muted);">MPC</div>
-              </div>
-        
-            </div>
-
-             <div class="p-5 rounded-xl nf-surface">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="font-semibold">Kanya gurukul High school</div>
-                  <div class="text-sm text-slate-400">May 2015 | Hyderabad</div>
-                </div>
-                <div class="text-sm" style="color: var(--nf-muted);">SSC</div>
-              </div>
-        
-            </div>
-
-        
-          </div>
-        </div>
-      </section>
-
-       <!-- ABOUT + HIGHLIGHTS -->
-      <section id="about" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 reveal">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div class="lg:col-span-2">
-            <h2 class="text-2xl font-semibold">About me</h2>
-            <p class="mt-3" style="color: var(--nf-muted);">I'm a mobile developer with 4+ years building apps using Flutter and Node.js. I enjoy solving product problems with clean code, good tests, and user-centered design. I’ve built production apps with offline-first sync, scanner integrations, and optimized local databases.</p>
-
-            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="p-5 rounded-xl nf-surface nf-card">
-                <div class="text-sm" style="color: var(--nf-muted);">Primary Stack</div>
-                <div class="mt-2 font-medium">Flutter • Dart • Node.js • SQLite</div>
-              </div>
-              <div class="p-5 rounded-xl nf-surface nf-card">
-                <div class="text-sm" style="color: var(--nf-muted);">What I build</div>
-                <div class="mt-2 font-medium">Logistics apps • Offline sync • Mobile-first UI</div>
-              </div>
-            </div>
-          </div>
-
-          <aside class="p-5 rounded-xl nf-surface nf-shadow">
-            <div class="text-sm" style="color: var(--nf-muted);">Contact</div>
-            <div class="mt-2 font-medium">sais31348@gmail.com</div>
-            <div class="mt-4 text-sm" style="color: var(--nf-muted);">Quick Links</div>
-            <ul class="mt-2 text-sm space-y-2">
-              <li><a href="#projects">Projects</a></li>
-              <li><a href="#skills">Skills</a></li>
-               <li><a href="https://www.linkedin.com/in/shivasai-kandoji-787bb518a/">linkedin</a></li>
+            <ul class="text-sm text-gray-400 space-y-2 list-disc list-inside">
+              <li>Built and maintained Flutter apps with offline sync.</li>
+              <li>Implemented scanner integration and calendar features.</li>
+              <li>Optimized local storage and JSON handling.</li>
             </ul>
-          </aside>
+          </div>
+
+          <div class="nf-card p-8 rounded-2xl">
+            <div class="flex flex-col md:flex-row justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-bold">Mobile Application Developer</h3>
+                <p class="text-red-500">BeamX TechLabs</p>
+              </div>
+              <p class="text-sm text-gray-500">2024</p>
+            </div>
+            <p class="text-sm text-gray-400 mb-4">Managed entire app lifecycle — from planning to Play Store release.</p>
+          </div>
+
+          <div class="nf-card p-8 rounded-2xl">
+            <div class="flex flex-col md:flex-row justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-bold">Android Developer</h3>
+                <p class="text-red-500">GeekBull Consulting</p>
+              </div>
+              <p class="text-sm text-gray-500">2021 – 2024</p>
+            </div>
+            <p class="text-sm text-gray-400">Transitioned from native Android to Flutter for high-performance apps.</p>
+          </div>
         </div>
       </section>
 
-
-      <!-- FOOTER -->
-      <footer class="py-8" style="border-top: 1px solid var(--nf-border);">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm" style="color: var(--nf-muted);">
-          © "KANDOJI SHIVASAI" • <span style="color: var(--nf-red);">Mobile App Developer</span>
+      <!-- CONTACT -->
+      <section id="about" class="py-24 reveal mb-20 text-center">
+        <h2 class="text-4xl font-black mb-6">Let's Build Something</h2>
+        <p class="text-gray-400 mb-10 max-w-lg mx-auto">I'm currently available for new projects and opportunities.</p>
+        <a href="mailto:sais31348@gmail.com" class="text-3xl md:text-5xl font-black text-red-600 hover:underline">sais31348@gmail.com</a>
+        <div class="flex justify-center gap-8 mt-12">
+          <a href="https://www.linkedin.com/in/shivasai-kandoji-787bb518a/" class="text-gray-500 hover:text-white transition-colors">LinkedIn</a>
+          <a href="#" class="text-gray-500 hover:text-white transition-colors">GitHub</a>
         </div>
-      </footer>
+      </section>
     </main>
 
-    <!-- MODAL (project details) -->
-    <div id="modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4">
-      <div class="max-w-2xl w-full rounded-xl p-6 nf-shadow nf-surface">
-        <div class="flex items-start justify-between">
-          <h3 id="modalTitle" class="text-lg font-semibold"></h3>
-          <button onclick="closeModal()" aria-label="Close" style="color: var(--nf-muted);">✕</button>
+    <footer class="py-10 border-t border-white/5 text-center text-gray-600 text-sm">
+      &copy; 2024 Kandoji Shivasai • Mobile App Developer
+    </footer>
+
+    <!-- MODAL -->
+    <div id="modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center p-6 z-[100] backdrop-blur-xl">
+      <div class="max-w-2xl w-full bg-zinc-900 border border-white/10 rounded-3xl p-10 shadow-2xl">
+        <div class="flex justify-between items-start mb-6">
+          <h3 id="modalTitle" class="text-3xl font-black"></h3>
+          <button onclick="closeModal()" class="text-gray-500 hover:text-white p-2">✕</button>
         </div>
-        <p id="modalBody" class="mt-3" style="color: var(--nf-muted);"></p>
-        <div class="mt-4 flex gap-3">
-          <a id="modalLink" href="#" class="px-4 py-2 rounded-md" style="background: var(--nf-red); color: #fff;">View repo</a>
-          <button onclick="closeModal()" class="px-4 py-2 rounded-md nf-surface">Close</button>
-        </div>
+        <p id="modalBody" class="text-gray-400 leading-relaxed text-lg mb-8"></p>
+        <button onclick="closeModal()" class="bg-red-600 text-white px-8 py-3 rounded-xl font-bold w-full">Close</button>
       </div>
     </div>
 
-    <!-- SCRIPTS -->
     <script>
-      // Mobile nav toggle
+      // Navigation
       const navToggle = document.getElementById('navToggle');
       const mobileNav = document.getElementById('mobileNav');
-      navToggle && navToggle.addEventListener('click', () => {
-        mobileNav.classList.toggle('hidden');
-      });
+      navToggle.onclick = () => mobileNav.classList.toggle('hidden');
 
-      // Simple project modal
+      // Modal
+      const modal = document.getElementById('modal');
       function openModal(title, body) {
         document.getElementById('modalTitle').textContent = title;
         document.getElementById('modalBody').textContent = body;
-        const modal = document.getElementById('modal');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
       }
       function closeModal() {
-        const modal = document.getElementById('modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
       }
 
-      // Scroll reveal
-      const prefersReducedMotion = globalThis.matchMedia && globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Scroll Reveal
+      const reveal = () => {
+        const reveals = document.querySelectorAll('.reveal');
+        reveals.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if(rect.top < window.innerHeight - 100) el.classList.add('is-visible');
+        });
+      };
+      window.onscroll = reveal;
+      reveal();
 
-      // Add animated reveals to project cards with stagger + alternating direction
-      const projectCards = Array.from(document.querySelectorAll('#projects article.nf-card'));
-      projectCards.forEach((card, idx) => {
-        const dirClass = idx % 2 === 0 ? 'reveal-left' : 'reveal-right';
-        card.classList.add(dirClass);
-        card.style.transitionDelay = `${Math.min(idx, 12) * 70}ms`;
-      });
+      // 3D Background - Smooth, subtle, cool floating animation
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-3d'), alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      const revealEls = Array.from(document.querySelectorAll('.reveal, .reveal-left, .reveal-right'));
+      // Elegant star field with soft glowing white and red mix
+      const particleCount = 1200;
+      const particleGeometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
 
-      if (prefersReducedMotion) {
-        revealEls.forEach((el) => el.classList.add('is-visible'));
-      } else if ('IntersectionObserver' in globalThis) {
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                io.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.12, rootMargin: '0px 0px -10% 0px' }
-        );
-        revealEls.forEach((el) => io.observe(el));
-      } else {
-        revealEls.forEach((el) => el.classList.add('is-visible'));
+      for(let i = 0; i < particleCount * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 80;
+        positions[i+1] = (Math.random() - 0.5) * 80;
+        positions[i+2] = (Math.random() - 0.5) * 80;
       }
 
-      // Fake contact handler (replace with real API or Netlify Forms)
-      function handleSubmit(e) {
-        e.preventDefault();
-        // Basic UX feedback — in production plug into an email API
-        const msg = document.getElementById('formMsg');
-        msg.classList.remove('hidden');
-        setTimeout(()=>msg.classList.add('hidden'), 4000);
-        e.target.reset();
+      particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const particleMaterial = new THREE.PointsMaterial({
+        color: 0xff3344,
+        size: 0.08,
+        transparent: true,
+        opacity: 0.5,
+        blending: THREE.AdditiveBlending
+      });
+      const particles = new THREE.Points(particleGeometry, particleMaterial);
+      scene.add(particles);
+
+      // Subtle slow floating geometric rings
+      const squares = [];
+      const squareGeo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+      const squareMat = new THREE.MeshBasicMaterial({ color: 0xe50914, wireframe: true, transparent: true, opacity: 0.4 });
+
+      for(let i = 0; i < 2; i++) {
+        const square = new THREE.Mesh(squareGeo, squareMat);
+        square.position.set(-20, (Math.random() - 0.5) * 10, -5 - (i * 5));
+        scene.add(square);
+        squares.push({
+            mesh: square,
+            speed: 0.05 + (Math.random() * 0.05)
+        });
       }
 
-      // Accessibility: close modal on ESC
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeModal();
+      camera.position.z = 25;
+
+      // Mouse parallax for subtle depth reaction
+      let mouseX = 0, mouseY = 0;
+      window.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX - window.innerWidth / 2) * 0.0005;
+        mouseY = (e.clientY - window.innerHeight / 2) * 0.0005;
       });
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Very calm, gentle rotation speeds
+        particles.rotation.y += 0.0008;
+        particles.rotation.x += 0.0003;
+
+        // Metroid-style data squares moving across screen
+        squares.forEach((s) => {
+          s.mesh.position.x += s.speed;
+          s.mesh.rotation.z += 0.01;
+          if (s.mesh.position.x > 20) s.mesh.position.x = -20;
+        });
+
+        // Smooth camera drift toward mouse position
+        camera.position.x += (mouseX - camera.position.x) * 0.05;
+        camera.position.y += (-mouseY - camera.position.y) * 0.05;
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.onresize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      };
     </script>
   </body>
 </html>
